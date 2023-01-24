@@ -74,6 +74,18 @@ std::string host_data(tcp::socket& socket) {
     return data;
 }
 
+void host_data(tcp::socket& socket, std::function<bool(char*, size_t)> cb) {
+    std::array<char, 1024> buffer;
+    asio::error_code ec;
+
+    while (!ec) {
+        const auto length = socket.read_some(asio::buffer(buffer), ec);
+        if (ec == asio::error::eof || (!cb(buffer.data(), length))) {
+            break;
+        }
+    }
+}
+
 std::string sync_request(const std::string_view id, const uint32_t length) {
     const auto len = {
         static_cast<char>(length & 0xff),

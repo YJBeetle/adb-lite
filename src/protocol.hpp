@@ -23,6 +23,8 @@ std::string host_message(asio::ip::tcp::socket& socket);
  */
 std::string host_data(asio::ip::tcp::socket& socket);
 
+void host_data(asio::ip::tcp::socket& socket, std::function<bool(char*, size_t)> cb);
+
 /// Encode the ADB sync request.
 /**
  * @param id 4-byte string of the request id.

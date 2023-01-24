@@ -142,6 +142,8 @@ class client_impl : public client {
     std::string devices() override;
     std::string shell(const std::string_view command) override;
     std::string exec(const std::string_view command) override;
+    void exec(const std::string_view command, std::function<bool(char*, size_t)> cb) override;
+
     bool push(const std::string_view src, const std::string_view dst,
               int perm) override;
     std::shared_ptr<io_handle>
@@ -227,6 +229,18 @@ std::string client_impl::exec(const std::string_view command) {
     send_host_request(socket, request);
 
     return protocol::host_data(socket);
+}
+
+void client_impl::exec(const std::string_view command, std::function<bool(char*, size_t)> cb) {
+    tcp::socket socket(m_context);
+    asio::connect(socket, m_endpoints);
+
+    switch_to_device(socket);
+
+    const auto request = std::string("exec:") + command.data();
+    send_host_request(socket, request);
+
+    protocol::host_data(socket, cb);
 }
 
 bool client_impl::push(const std::string_view src, const std::string_view dst,
