@@ -74,13 +74,13 @@ std::string host_data(tcp::socket& socket) {
     return data;
 }
 
-void host_data(tcp::socket& socket, std::function<bool(char*, size_t)> cb) {
+void host_data(tcp::socket& socket, std::function<bool(std::array<char, 1024>, size_t)> cb) {
     std::array<char, 1024> buffer;
     asio::error_code ec;
 
     while (!ec) {
         const auto length = socket.read_some(asio::buffer(buffer), ec);
-        if (ec == asio::error::eof || (!cb(buffer.data(), length))) {
+        if (ec == asio::error::eof || (!cb(buffer, length))) {
             break;
         }
     }

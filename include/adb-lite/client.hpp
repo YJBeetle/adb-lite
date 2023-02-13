@@ -128,7 +128,7 @@ class client {
      */
     virtual std::string exec(const std::string_view command) = 0;
 
-    virtual void exec(const std::string_view command, std::function<bool(char*, size_t)> cb) = 0;
+    virtual void exec(const std::string_view command, std::function<bool(std::array<char, 1024>, size_t)> cb) = 0;
 
     /// Send a file to the device.
     /**
